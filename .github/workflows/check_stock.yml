@@ -1,0 +1,62 @@
+# .github/workflows/check_stock.yml
+#
+# Cách dùng:
+# 1. Tạo repo GitHub (Private cũng được), đẩy file check_stock_tgdd.py
+#    vào thư mục gốc repo.
+# 2. Vào repo > Settings > Secrets and variables > Actions > New repository
+#    secret, tạo 2 secret:
+#      TG_BOT_TOKEN  = token bot Telegram của bạn
+#      TG_CHAT_ID    = chat id của bạn
+# 3. Trong check_stock_tgdd.py, sửa phần CONFIG thành đọc từ biến môi
+#    trường:
+#      import os
+#      TELEGRAM_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "")
+#      TELEGRAM_CHAT_ID   = os.environ.get("TG_CHAT_ID", "")
+# 4. Tạo thư mục .github/workflows/ trong repo, đặt file này vào đó.
+# 5. Push lên GitHub -> vào tab Actions để xem chạy theo lịch, hoặc
+#    bấm "Run workflow" để test ngay.
+#
+# File seen_units.json (dùng để không báo trùng 1 máy nhiều lần) sẽ
+# được workflow tự commit ngược lại vào repo sau mỗi lần chạy, để lần
+# chạy sau (trên máy ảo mới của GitHub) vẫn nhớ được các máy đã báo.
+
+name: Check TGDD stock (Ha Noi)
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"   # mỗi 10 phút (giờ UTC)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write   # cần quyền này để commit lại seen_units.json
+
+jobs:
+  check-stock:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run stock check
+        env:
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
+        run: python check_stock_tgdd.py --once
+
+      - name: Persist seen_units.json
+        run: |
+          if [ -f seen_units.json ]; then
+            git config user.name "stock-bot"
+            git config user.email "stock-bot@users.noreply.github.com"
+            git add seen_units.json
+            git diff --quiet --cached || git commit -m "update seen units"
+            git push
+          fi
