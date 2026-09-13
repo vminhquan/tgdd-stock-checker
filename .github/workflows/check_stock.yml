@@ -2,16 +2,13 @@
 #
 # Cách dùng:
 # 1. Tạo repo GitHub (Private cũng được), đẩy file check_stock_tgdd.py
-#    vào thư mục gốc repo.
+#    và requirements.txt vào thư mục gốc repo.
 # 2. Vào repo > Settings > Secrets and variables > Actions > New repository
 #    secret, tạo 2 secret:
 #      TG_BOT_TOKEN  = token bot Telegram của bạn
 #      TG_CHAT_ID    = chat id của bạn
-# 3. Trong check_stock_tgdd.py, sửa phần CONFIG thành đọc từ biến môi
-#    trường:
-#      import os
-#      TELEGRAM_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "")
-#      TELEGRAM_CHAT_ID   = os.environ.get("TG_CHAT_ID", "")
+# 3. check_stock_tgdd.py đã đọc token/chat_id từ biến môi trường
+#    (os.environ.get("TG_BOT_TOKEN"...)) nên không cần sửa gì thêm.
 # 4. Tạo thư mục .github/workflows/ trong repo, đặt file này vào đó.
 # 5. Push lên GitHub -> vào tab Actions để xem chạy theo lịch, hoặc
 #    bấm "Run workflow" để test ngay.
@@ -19,12 +16,15 @@
 # File seen_units.json (dùng để không báo trùng 1 máy nhiều lần) sẽ
 # được workflow tự commit ngược lại vào repo sau mỗi lần chạy, để lần
 # chạy sau (trên máy ảo mới của GitHub) vẫn nhớ được các máy đã báo.
+#
+# LƯU Ý: GitHub Actions không đảm bảo chạy đúng chính xác từng phút,
+# đặc biệt vào giờ cao điểm có thể bị trễ vài phút so với lịch đặt.
 
 name: Check TGDD stock (Ha Noi)
 
 on:
   schedule:
-    - cron: "*/10 * * * *"   # mỗi 10 phút (giờ UTC)
+    - cron: "*/3 * * * *"   # mỗi 3 phút (giờ UTC)
   workflow_dispatch: {}
 
 permissions:

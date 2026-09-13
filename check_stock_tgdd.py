@@ -68,7 +68,7 @@ TELEGRAM_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("TG_CHAT_ID", "")
 
 # Khoảng thời gian giữa các lần kiểm tra khi chạy chế độ liên tục (giây)
-CHECK_INTERVAL_SECONDS = 300
+CHECK_INTERVAL_SECONDS = 180
 
 # File lưu lại các oldid đã từng báo, để không báo trùng
 SEEN_FILE = "seen_units.json"
