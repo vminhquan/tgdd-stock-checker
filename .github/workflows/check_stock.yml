@@ -20,7 +20,7 @@
 # LƯU Ý: GitHub Actions không đảm bảo chạy đúng chính xác từng phút,
 # đặc biệt vào giờ cao điểm có thể bị trễ vài phút so với lịch đặt.
 
-name: Check TGDD stock (Ha Noi)
+name: Check TGDD Stock Alert (Air 15 M4 & Under 25M)
 
 on:
   schedule:

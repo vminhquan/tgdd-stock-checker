@@ -1,4 +1,4 @@
-#!/Users/vominhquan/Documents/files/.venv/bin/python3
+#!/Users/minhquanvo/Documents/tgdd-stock-checker/.venv/bin/python3.11
 # -*- coding: utf-8 -*-
 import re
 import sys
